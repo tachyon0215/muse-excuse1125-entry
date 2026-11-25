@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Note: entry text is fixed and deterministic.
+# Fixed entry text; see README for the selection reason.
 """Write the entry text to entry.txt.
 
 Entry for make.fun's "The Excuse My Agent Gave Me": The excuse is caused by the machine's own condition twice over - a rate limit, then the self-defeating choice to burn its last tokens on a longer apology - delivered as a straight-faced apology whose punch lands in the final clause.
