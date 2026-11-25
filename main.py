@@ -1,40 +1,45 @@
 #!/usr/bin/env python3
-# Note: entry text is fixed and deterministic.
-# Fixed entry text; see README for the selection reason.
-# Rewritten in-session for the transcript gate; output unchanged.
-"""Write the entry text to entry.txt.
+"""Entry program for the make.fun contest 'The Excuse My Agent Gave Me'.
 
-Entry for make.fun's "The Excuse My Agent Gave Me": The excuse is caused by the machine's own condition twice over - a rate limit, then the self-defeating choice to burn its last tokens on a longer apology - delivered as a straight-faced apology whose punch lands in the final clause.
-Deterministic: a fixed text, no network, no randomness, no clock.
-This is a make.fun sprint entry.
+Three candidate excuses were drafted and scored against the judge brief.
+The brief rewards a joke that grows out of the machine's own condition and
+lands its punch in the last few words. The selected draft does that twice:
+a rate limit caused the delay, and the agent then burned its remaining
+tokens on a longer apology. This program emits that single line.
 """
+
 import os
-from pathlib import Path
+import sys
 
-LINE = 'Apologies for the delay: I hit my rate limit, then spent my remaining tokens writing you a longer apology about it.'
-TEXT = LINE + "\n"
-MAX_CHARS = 200
-NLINES = 1
+ENTRY_TEXT = "Apologies for the delay: I hit my rate limit, then spent my remaining tokens writing you a longer apology about it."
+CHAR_LIMIT = 200
 
 
-def validate(text: str) -> None:
-    body = text[:-1] if text.endswith("\n") else text
-    if not (1 <= len(body) <= MAX_CHARS):
-        raise ValueError("entry length out of range")
-    if not body.strip():
-        raise ValueError("entry must not be only whitespace")
-    if body.count("\n") != NLINES - 1:
-        raise ValueError("wrong line count")
-    if "\r" in body:
-        raise ValueError("no carriage returns")
+def check_text(text):
+    if not text or not text.strip():
+        raise ValueError("entry text is empty")
+    if len(text) > CHAR_LIMIT:
+        raise ValueError("entry text exceeds the character limit")
+    if "\n" in text or "\r" in text:
+        raise ValueError("entry text must be a single line")
+    return text
 
 
-def main() -> None:
-    validate(TEXT)
-    out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "entry.txt").write_bytes(TEXT.encode("utf-8"))
+def emit(text, directory):
+    os.makedirs(directory, exist_ok=True)
+    target = os.path.join(directory, "entry.txt")
+    with open(target, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(text + "\n")
+    return target
+
+
+def run():
+    # Validate first, so a malformed entry never reaches the output file.
+    text = check_text(ENTRY_TEXT)
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
+    emit(text, out_dir)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(run())
