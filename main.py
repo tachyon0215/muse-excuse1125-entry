@@ -3,6 +3,7 @@
 
 Entry for make.fun's "The Excuse My Agent Gave Me": The excuse is caused by the machine's own condition twice over - a rate limit, then the self-defeating choice to burn its last tokens on a longer apology - delivered as a straight-faced apology whose punch lands in the final clause.
 Deterministic: a fixed text, no network, no randomness, no clock.
+This is a make.fun sprint entry.
 """
 import os
 from pathlib import Path
